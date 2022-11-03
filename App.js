@@ -17,27 +17,23 @@ export default function App () {
             // color and size params            
             let iconName;           
              if (route.name === 'Home') {              
-              iconName = 'md-home';           
+              iconName = 'md-home'; 
+              color = '#7b68ee';            
             } else if (route.name === 'Search') {              
-              iconName = 'md-search';            
-            } else if (route.name === 'Books') {              
+              iconName = 'md-search';
+              color = '#7b68ee';            
+            } else if (route.name === 'Bookshelf') {              
               iconName = 'md-library';
+              color = '#7b68ee';  
             } 
               return <Ionicons name={iconName} size={size} color={color} />;   //it returns an icon component          
             },        
           })}>
             <Tab.Screen name="Home"component={HomeScreen} />
             <Tab.Screen name="Search"component={SearchScreen} />
-            <Tab.Screen name="Books"component={BookScreen} />
+            <Tab.Screen name="Bookshelf"component={BookScreen} />
       </Tab.Navigator>    
     </NavigationContainer>
     
   );
 }
-/*<NavigationContainer>
-<Tab.Navigator>
-<Tab.Screen name="Home"component={HomeScreen} />
-<Tab.Screen name="Search a book"component={SearchScreen} />
-<Tab.Screen name="Books"component={BookScreen} />
-</Tab.Navigator>
-</NavigationContainer>*/
