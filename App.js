@@ -4,6 +4,7 @@ import HomeScreen from'./HomeScreen'
 import SearchScreen from './SearchScreen';
 import BookScreen from './BookScreen';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Header } from 'react-native-elements';
 
 const Tab = createBottomTabNavigator();
 
@@ -29,9 +30,15 @@ export default function App () {
               return <Ionicons name={iconName} size={size} color={color} />;   //it returns an icon component          
             },        
           })}>
-            <Tab.Screen name="Home"component={HomeScreen} />
+          
+            <Tab.Screen 
+              name="Home"
+              component={HomeScreen}
+              iconName = 'md-home'
+            />
             <Tab.Screen name="Search"component={SearchScreen} />
             <Tab.Screen name="Bookshelf"component={BookScreen} />
+          
       </Tab.Navigator>    
     </NavigationContainer>
     

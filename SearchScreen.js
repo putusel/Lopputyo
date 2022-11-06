@@ -14,13 +14,14 @@ export default function SearchScreen({navigation}) {
   const [repositories, setRepositories] = useState([]);
 
   const getRepositories = () => {  
+    
     fetch(`https://www.googleapis.com/books/v1/volumes?q="${keyword}"`)  
     .then(response => response.json())  
-    .then(data => setRepositories(data.items))  
-    .catch(error => {         
+    .then(data => setRepositories(data.items)) 
+        .catch(error => {         
           Alert.alert('Error', error);   
     });
-    //setKeyword('');
+    
   }
   const listSeparator = () => {
     return (
@@ -37,14 +38,16 @@ export default function SearchScreen({navigation}) {
  
   return (
     <View style={styles.container}>
-      
+      <Text style={styles.text}>
+        Search a book from the database. Type in an author or a title of a book.
+      </Text>
       <Input 
         placeholder='Type in an author or a title'
-        label='SEARCH A BOOK FROM A DATABASE TO YOUR VIRTUAL BOOK SHELF'
+        placeholderTextColor='#696969'
         onChangeText={text => setKeyword(text) } />
       <View>
         <Button 
-        buttonStyle={{ width: 200, padding: 10, backgroundColor: '#7b68ee', borderColor: 'gray' }}
+        buttonStyle={{ width: 200, padding: 10, backgroundColor: '#7b68ee', borderColor: 'gray', marginBottom: 20 }}
         icon={{name: 'search'}} onPress={getRepositories} title='SEARCH' />
       </View>
       <FlatList
@@ -52,7 +55,10 @@ export default function SearchScreen({navigation}) {
         renderItem={({item}) =>
         <View>
           <Text 
-            style={{fontSize:16, fontWeight: "bold"}}>{item.title}
+            style={{fontSize:18, fontWeight: "bold", marginBottom: 5}}>{item.volumeInfo.title}
+          </Text>
+          <Text 
+            style={{fontSize:16, marginBottom: 5 }}>{item.volumeInfo.authors}
           </Text>
           
         </View>} 
@@ -71,7 +77,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#e6e6fa',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 10
+    paddingTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
   },
   renderedList: {
     width: '100%'
@@ -86,7 +94,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     color: 'red',
     borderColor: 'red',
-    
     marginBottom: 50
+  },
+  text: {
+    color: '#7b68ee',
+    fontSize: 20,
+    marginBottom: 10
   }
 });

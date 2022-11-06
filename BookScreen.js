@@ -6,43 +6,30 @@ import { StatusBar } from 'expo-status-bar';
 import { TextInput, Image, Dimensions } from 'react-native';
 
 
-const db = SQLite.openDatabase('database.db');
+const db = SQLite.openDatabase('booklistdatabase.db');
 
 export default function SearchScreen({}) {
 
-  const [book, setBook] = useState('');
+  const [author, setAuthor] = useState('');
+  const [title, setTitle] = useState('');
   const [books, setBooks] = useState([]);
-  const [keyword, setKeyword] = useState('');
-  
-  const listSeparator = () => {
-    return (
-      <View
-        style={{
-          height: 1,
-          width: "80%",
-          backgroundColor: "#CED0CE",
-          marginLeft: "10%"
-        }}
-      />
-    );
-  };
-
+    
   //create table
    useEffect(() => {
     db.transaction(tx => {
-      tx.executeSql('create table if not exists books (id integer primary key not null, place text);');
+      tx.executeSql('create table if not exists books (id integer primary key not null, book text);');
     }, null, updateList);
   }, []);
 
-  //insert a book
+  //save a book
   const saveBook = () => {
     db.transaction(tx => {
-      tx.executeSql('insert into books (book) values (?);', [book]);    
+      tx.executeSql('insert into books (author, title) values (?, ?);', [author, title]);  
     }, null, updateList
     )
-    setBooks([books])
-    setBook('');
-    }
+    setAuthor('');
+    setTitle('');
+  }
   // delete item from table
   const deleteItem = (id) => {
   Alert.alert("Do you want to remove the book?", "The book will be deleted permanently from your virtual book shelf",
@@ -59,42 +46,55 @@ export default function SearchScreen({}) {
     );
   };
 
-
-  // update books
+  // update booklist
   const updateList = () => {
     db.transaction(tx => {
       tx.executeSql('select * from books;', [], (_, { rows }) => 
         setBooks(rows._array)
       );
-    }, null, null);
+    });
   };
 
   // render items
-  const renderItem= ({ item }) => (
-    <ListItem topDivider bottomDivider>
+  const renderItem = ({item}) => (
+    <ListItem bottomDivider>
       <ListItem.Content>
-        <View style={styles.list}>
-          <View style={styles.books}>
-            <ListItem.Title numberOfLines={1} onLongPress={() => deleteItem(item.id)}>{item.book}</ListItem.Title>
-          </View>
-            <ListItem onPress={() => navigation.navigate('BookScreen', {book: item.book})}>
-              <Text style={{color: 'grey'}}>Add to book shelf</Text>
-              <Icon name="book" size={18} color='grey' />
-            </ListItem>
-        </View>
+        <ListItem.Title>{item.title}</ListItem.Title>
+        <ListItem.Subtitle>{item.author}</ListItem.Subtitle>  
       </ListItem.Content>
+      <Icon type='material' name='delete' color='red' onPress={ () => deleteItem(item.id)} />
     </ListItem>
-  );
+  )
+
+  const listSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 5,
+          width: "80%",
+          backgroundColor: "#CED0CE",
+          marginLeft: "10%"
+        }}
+      />
+    );
+  };
   
   return (
     <View style={styles.container}>
-            
+      <Text style={styles.text}>
+        This is your virtual bookshelf. Type in an author and a title of a book.
+      </Text>     
       <Input
-        placeholder='Type in a book'
-        label='ADD A BOOK TO YOUR VIRTUAL BOOKSHELF'
-        color= '#7b68ee'
-        onChangeText={book => setBook(book)}
-        value={book}
+        placeholder='Type in an author'
+        placeholderTextColor='#696969'
+        onChangeText={author => setAuthor(author)}
+        value={author}
+      />
+      <Input
+        placeholder='Type in a title'
+        placeholderTextColor='#696969'
+        onChangeText={title => setTitle(title)}
+        value={title}
       />
       <View >
         <Button 
@@ -104,10 +104,11 @@ export default function SearchScreen({}) {
         
       </View>
       <FlatList
-        style={styles.renderedList}
-        keyExtractor={item => item.id.toString()}
-        data={books}
+        style={books}
         renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
+        ItemSeparatorComponent={listSeparator}
+       
       />
       
     </View>
@@ -120,7 +121,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#e6e6fa',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 10
+    paddingTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
   },
   renderedList: {
     width: '100%'
@@ -135,7 +138,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     color: 'red',
     borderColor: 'red',
-    
-    marginBottom: 50
-  }
+    marginBottom: 50,
+  },
+    text: {
+      color: '#7b68ee',
+      fontSize: 20,
+      marginBottom: 10
+    }
+  
 });
