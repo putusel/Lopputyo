@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { TextInput, Image, Dimensions } from 'react-native';
 
 
-const db = SQLite.openDatabase('booklistdatabase.db');
+const db = SQLite.openDatabase('booklistdb.db');
 
 export default function SearchScreen({}) {
 
@@ -17,7 +17,7 @@ export default function SearchScreen({}) {
   //create table
    useEffect(() => {
     db.transaction(tx => {
-      tx.executeSql('create table if not exists books (id integer primary key not null, book text);');
+      tx.executeSql('create table if not exists books (id integer primary key not null, author text, title text);');
     }, null, updateList);
   }, []);
 
