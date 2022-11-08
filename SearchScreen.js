@@ -6,12 +6,11 @@ import { StatusBar } from 'expo-status-bar';
 import { TextInput, Image, Dimensions } from 'react-native';
 
 
-const db = SQLite.openDatabase('database.db');
-
-export default function SearchScreen({navigation}) {
+export default function SearchScreen({}) {
 
   const [keyword, setKeyword] = useState('');
   const [repositories, setRepositories] = useState([]);
+  
 
   const getRepositories = () => {  
     
@@ -36,31 +35,7 @@ export default function SearchScreen({navigation}) {
     );
   };
 
-  //create table
-  useEffect(() => {
-    db.transaction(tx => {
-      tx.executeSql('create table if not exists books (id integer primary key not null, author text, title text);');
-    }, null, updateList);
-  }, []);
-
-  // update booklist
-  const updateList = () => {
-    db.transaction(tx => {
-      tx.executeSql('select * from books;', [], (_, { rows }) => 
-        setBooks(rows._array)
-      );
-    });
-  };
-
-  //save a book
-  const saveBook = () => {
-    db.transaction(tx => {
-      tx.executeSql('insert into books (author, title) values (?, ?);', [author, title]);  
-    }, null, updateList
-    )
-    
-  }
- 
+   
   return (
     <View style={styles.container}>
       <Text style={styles.text}>
@@ -73,7 +48,7 @@ export default function SearchScreen({navigation}) {
       <View>
         <Button 
         buttonStyle={{ width: 200, padding: 10, backgroundColor: '#7b68ee', borderColor: 'gray', marginBottom: 20 }}
-        icon={{name: 'search'}} onPress={getRepositories} title='SEARCH' />
+        icon={{name: 'search'}} onPress={getRepositories} title='SEARCH'/>
       </View>
       <FlatList
         keyExtractor={(item,index) => index.toString()}  
@@ -88,12 +63,7 @@ export default function SearchScreen({navigation}) {
             style={{fontSize:16, marginBottom: 5 }}>{item.volumeInfo.authors}
           </Text>
           
-        <Button 
-        buttonStyle={{ width: 100, padding: 10, backgroundColor: '#7b68ee', borderColor: 'gray', marginLeft: 120, marginBottom: 5 }}
-        icon={{name: 'save'}} title='SAVE' 
-        onPress={saveBook} />
-        
-      
+              
         </View>} 
       data={repositories}
       ItemSeparatorComponent={listSeparator} />
