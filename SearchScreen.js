@@ -35,6 +35,31 @@ export default function SearchScreen({navigation}) {
       />
     );
   };
+
+  //create table
+  useEffect(() => {
+    db.transaction(tx => {
+      tx.executeSql('create table if not exists books (id integer primary key not null, author text, title text);');
+    }, null, updateList);
+  }, []);
+
+  // update booklist
+  const updateList = () => {
+    db.transaction(tx => {
+      tx.executeSql('select * from books;', [], (_, { rows }) => 
+        setBooks(rows._array)
+      );
+    });
+  };
+
+  //save a book
+  const saveBook = () => {
+    db.transaction(tx => {
+      tx.executeSql('insert into books (author, title) values (?, ?);', [author, title]);  
+    }, null, updateList
+    )
+    
+  }
  
   return (
     <View style={styles.container}>
@@ -56,11 +81,19 @@ export default function SearchScreen({navigation}) {
         <View>
           <Text 
             style={{fontSize:18, fontWeight: "bold", marginBottom: 5}}>{item.volumeInfo.title}
+          
           </Text>
+          
           <Text 
             style={{fontSize:16, marginBottom: 5 }}>{item.volumeInfo.authors}
           </Text>
           
+        <Button 
+        buttonStyle={{ width: 100, padding: 10, backgroundColor: '#7b68ee', borderColor: 'gray', marginLeft: 120, marginBottom: 5 }}
+        icon={{name: 'save'}} title='SAVE' 
+        onPress={saveBook} />
+        
+      
         </View>} 
       data={repositories}
       ItemSeparatorComponent={listSeparator} />
@@ -82,7 +115,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   renderedList: {
-    width: '100%'
+    width: '100%',
+    borderColor: '#7b68ee'
   },
   list:{
     flexDirection:'row',

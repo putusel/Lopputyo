@@ -5,7 +5,6 @@ import * as SQLite from 'expo-sqlite';
 import { StatusBar } from 'expo-status-bar';
 import { TextInput, Image, Dimensions } from 'react-native';
 
-
 const db = SQLite.openDatabase('booklistdb.db');
 
 export default function SearchScreen({}) {
@@ -13,7 +12,8 @@ export default function SearchScreen({}) {
   const [author, setAuthor] = useState('');
   const [title, setTitle] = useState('');
   const [books, setBooks] = useState([]);
-    
+
+      
   //create table
    useEffect(() => {
     db.transaction(tx => {
@@ -32,7 +32,7 @@ export default function SearchScreen({}) {
   }
   // delete item from table
   const deleteItem = (id) => {
-  Alert.alert("Do you want to remove the book?", "The book will be deleted permanently from your virtual book shelf",
+  Alert.alert("Do you want to remove the book?", "The book will be deleted permanently from your virtual bookshelf",
       [
         {
           text: "Cancel"
@@ -57,14 +57,18 @@ export default function SearchScreen({}) {
 
   // render items
   const renderItem = ({item}) => (
-    <ListItem bottomDivider>
+    <ListItem bottomDivider containerStyle={{backgroundColor:'#e6e6fa', borderColor: '#7b68ee'}}>
       <ListItem.Content>
-        <ListItem.Title>{item.title}</ListItem.Title>
+        <ListItem.Title >{item.title}</ListItem.Title>
         <ListItem.Subtitle>{item.author}</ListItem.Subtitle>  
       </ListItem.Content>
       <Icon type='material' name='delete' color='red' onPress={ () => deleteItem(item.id)} />
     </ListItem>
   )
+
+       
+    
+  
 
   const listSeparator = () => {
     return (
@@ -72,7 +76,7 @@ export default function SearchScreen({}) {
         style={{
           height: 5,
           width: "80%",
-          backgroundColor: "#CED0CE",
+          backgroundColor: '#e6e6fa',
           marginLeft: "10%"
         }}
       />
@@ -104,13 +108,11 @@ export default function SearchScreen({}) {
         
       </View>
       <FlatList
-        style={books}
-        renderItem={renderItem}
+        style={styles.renderedList}
         keyExtractor={item => item.id.toString()}
-        ItemSeparatorComponent={listSeparator}
-       
-      />
-      
+        data={books}
+        renderItem={renderItem}
+        ItemSeparatorComponent={listSeparator}/>      
     </View>
   );
 };
@@ -126,7 +128,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   renderedList: {
-    width: '100%'
+    width: '100%',
+    backgroundColor: '#e6e6fa',
+    color: '#e6e6fa',
+    marginTop: 10
   },
   list:{
     flexDirection:'row',
